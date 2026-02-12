@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nathansantiago/transistor-diagram-to-latex/backend/export"
+	"github.com/nathansantiago/transistor-diagram-to-latex/backend/models"
 )
 
 func setupRoutes(r *gin.Engine) {
@@ -35,10 +37,60 @@ func healthHandler(c *gin.Context) {
 	})
 }
 
-func componentsHandler(c *gin.Context) {
+func exportHandler(c *gin.Context) {
+	var req models.ExportRequest
 
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ExportResponse{
+			Success: false,
+			Errors:  []string{err.Error()},
+		})
+		return
+	}
+
+	if len(req.Diagram.Components) == 0 {
+		c.JSON(http.StatusBadRequest, models.ExportResponse{
+			Success: false,
+			Errors:  []string{"diagram must contain at least one component"},
+		})
+		return
+	}
+
+	// Create exporter with custom scale
+	scale := req.Scale
+	if scale == 0 {
+		scale = 50.0 // Default scale
+	}
+	exporter := export.NewExporter(scale)
+
+	// Generate LaTeX
+	latex, err := exporter.ExportToLaTeX(req.Diagram, req.IncludeHeader)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ExportResponse{
+			Success: false,
+			Errors:  []string{err.Error()},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.ExportResponse{
+		Success: true,
+		LaTeX:   latex,
+	})
 }
 
-func exportHandler(c *gin.Context) {
+func componentsHandler(c *gin.Context) {
+	components := make([]gin.H, 0, len(export.ComponentMapping))
 
+	for compType, tikzName := range export.ComponentMapping {
+		components = append(components, gin.H{
+			"type": compType,
+			"tikz": tikzName,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"components": components,
+		"count":      len(components),
+	})
 }
