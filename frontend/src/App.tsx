@@ -1,34 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { Circle, Layer, Stage } from "react-konva"
+import Grid from './components/Grid'
 
 function App() {
-  const [count, setCount] = useState(0)
+  var width = window.innerWidth
+  var height = window.innerHeight
+  var gridWidth = 50
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Stage width={width} height={height}>
+      <Layer>
+        <Grid width={width} height={height} gridWidth={gridWidth} />
+        <Circle width={50} height={50} x={100} y={100} fill="red" draggable
+          onMouseEnter={(e) => {
+            document.body.style.cursor = 'pointer';
+          }}
+          onMouseLeave={(e) => {
+            document.body.style.cursor = 'default';
+          }} />
+      </Layer>
+    </Stage>
   )
 }
 
