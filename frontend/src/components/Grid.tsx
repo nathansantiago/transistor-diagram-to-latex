@@ -7,20 +7,37 @@ type GridProps = {
 };
 
 export default function Grid({ width, height, gridWidth }: GridProps) {
+  const extendedWidth = width * 2;
+  const extendedHeight = height * 2;
+
   return (
     <>
-      {Array.from({ length: Math.ceil(width / gridWidth) }).map((_, i) => (
+      {/* Vertical lines */}
+      {Array.from({ length: Math.ceil(extendedWidth / gridWidth) + 1 }).map((_, i) => (
         <Line
-          key={i * gridWidth}
-          points={[Math.round(i * gridWidth) + 0.5, 0, Math.round(i * gridWidth) + 0.5, height]}
-          stroke="#fff"
+          key={`v-${i}`}
+          points={[
+            Math.round(i * gridWidth) + 0.5,
+            -extendedHeight,
+            Math.round(i * gridWidth) + 0.5,
+            extendedHeight
+          ]}
+          stroke="#374151"
+          strokeWidth={0.5}
         />
       ))}
-      {Array.from({ length: Math.ceil(height / gridWidth) }).map((_, i) => (
+      {/* Horizontal lines */}
+      {Array.from({ length: Math.ceil(extendedHeight / gridWidth) + 1 }).map((_, i) => (
         <Line
-          key={i * gridWidth}
-          points={[0, Math.round(i * gridWidth) + 0.5, width, Math.round(i * gridWidth) + 0.5]}
-          stroke="#fff"
+          key={`h-${i}`}
+          points={[
+            -extendedWidth,
+            Math.round(i * gridWidth) + 0.5,
+            extendedWidth,
+            Math.round(i * gridWidth) + 0.5
+          ]}
+          stroke="#374151"
+          strokeWidth={0.5}
         />
       ))}
     </>
