@@ -34,6 +34,7 @@ var ComponentMapping = map[string]string{
 
 	// Basic
 	"ground":   "ground",
+	"rground":  "rground",
 	"junction": "circ",
 
 	// Active components
@@ -230,6 +231,7 @@ func (e *Exporter) getOppositePortCoordinate(comp models.Component, position str
 func (e *Exporter) isNodeComponent(componentType string) bool {
 	nodeComponents := map[string]bool{
 		"ground":   true,
+		"rground":  true,
 		"junction": true,
 	}
 	return nodeComponents[componentType]
