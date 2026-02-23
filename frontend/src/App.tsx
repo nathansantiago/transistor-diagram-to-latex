@@ -1,32 +1,33 @@
 import './App.css';
-import { Circle, Layer, Stage } from 'react-konva';
-import Grid from './components/Grid';
+import Canvas from './components/Canvas';
+import Toolbar from './components/Toolbar';
+import { useEffect, useState } from 'react';
 
 function App() {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  var gridWidth = 50;
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight - 50, // Account for toolbar
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight - 50, // Account for toolbar
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
-    <Stage width={width} height={height}>
-      <Layer>
-        <Grid width={width} height={height} gridWidth={gridWidth} />
-        <Circle
-          width={50}
-          height={50}
-          x={100}
-          y={100}
-          fill="red"
-          draggable
-          onMouseEnter={(e) => {
-            document.body.style.cursor = 'pointer';
-          }}
-          onMouseLeave={(e) => {
-            document.body.style.cursor = 'default';
-          }}
-        />
-      </Layer>
-    </Stage>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <Toolbar />
+      <div style={{ marginTop: '50px' }}>
+        <Canvas width={dimensions.width} height={dimensions.height} />
+      </div>
+    </div>
   );
 }
 
